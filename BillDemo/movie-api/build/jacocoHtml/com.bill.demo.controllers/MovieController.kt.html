@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MovieController.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">movie-api</a> &gt; <a href="index.source.html" class="el_package">com.bill.demo.controllers</a> &gt; <span class="el_source">MovieController.kt</span></div><h1>MovieController.kt</h1><pre class="source lang-java linenums">package com.bill.demo.controllers
+
+import com.bill.demo.dto.movie.*
+import com.bill.demo.exceptions.AppException
+import com.bill.demo.services.impl.DefaultActorService
+import com.bill.demo.services.impl.DefaultMovieService
+import jakarta.transaction.Transactional
+import jakarta.validation.Valid
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.web.bind.annotation.*
+
+<span class="nc" id="L14">@RestController</span>
+@RequestMapping(&quot;/v1/movies&quot;)
+<span class="nc" id="L16">class MovieController(val movieService: DefaultMovieService, val actorService: DefaultActorService) {</span>
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(&quot;hasAuthority('ROLE_Read')&quot;)
+    fun getAllMovies(): ResponseEntity&lt;List&lt;MovieDto&gt;&gt; {
+<span class="nc" id="L22">        val movies = movieService.getAllMovies()</span>
+<span class="nc" id="L23">        return ResponseEntity.ok(movies.map { it.toMovieDto() })</span>
+    }
+
+    @GetMapping(&quot;/{movieId}&quot;)
+    @PreAuthorize(&quot;hasAuthority('ROLE_Read')&quot;)
+    fun getMovie(
+        @PathVariable movieId: Long
+    ) : ResponseEntity&lt;MovieDto&gt; {
+<span class="nc" id="L31">        val movie = movieService.findById(movieId)</span>
+<span class="nc" id="L32">        return ResponseEntity.ok(movie.toMovieDto())</span>
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize(&quot;hasAuthority('ROLE_Write')&quot;)
+    @Transactional
+    fun addMovie(
+        @Valid @RequestBody createMovieDto: CreateMovieDto
+    ): ResponseEntity&lt;MovieDto&gt; {
+<span class="nc" id="L42">        var movieByNameAndReleaseDate = movieService.findMovieByTitleAndDate(createMovieDto.title, createMovieDto.releaseDate)</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">        if (movieByNameAndReleaseDate!=null) {</span>
+<span class="nc" id="L44">            throw AppException(&quot;Movie with same name and release date already exists&quot;, HttpStatus.FORBIDDEN)</span>
+        }
+<span class="nc" id="L46">        createMovieDto.actors.map {</span>
+<span class="nc" id="L47">            actorDto -&gt;  actorService.findById(actorDto.id)</span>
+        }
+<span class="nc" id="L49">        val movie = movieService.save(createMovieDto.toMovie())</span>
+<span class="nc" id="L50">        return ResponseEntity.ok(movie.toMovieDto())</span>
+    }
+
+    @DeleteMapping(&quot;/{movieId}&quot;)
+    @PreAuthorize(&quot;hasAuthority('ROLE_Write')&quot;)
+    fun deleteMovie(
+        @PathVariable movieId: Long
+    ) {
+<span class="nc" id="L58">        movieService.findById(movieId)</span>
+<span class="nc" id="L59">        movieService.deleteById(movieId)</span>
+<span class="nc" id="L60">    }</span>
+
+    @PatchMapping(&quot;/{movieId}&quot;)
+    @PreAuthorize(&quot;hasAuthority('ROLE_Write')&quot;)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Transactional
+    fun updateActor(
+        @PathVariable movieId: Long,
+        @Valid @RequestBody updateMovieDto: UpdateMovieDto
+    ): ResponseEntity&lt;MovieDto&gt; {
+<span class="nc" id="L70">        var movie = movieService.findById(movieId)</span>
+<span class="nc" id="L71">        var movieByNameAndReleaseDate = movieService.findMovieByTitleAndDate(updateMovieDto.title, updateMovieDto.releaseDate)</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">        if (movieByNameAndReleaseDate!=null) {</span>
+<span class="nc" id="L73">            throw AppException(&quot;Movie with same name and release date already exists&quot;, HttpStatus.FORBIDDEN)</span>
+        }
+<span class="nc" id="L75">        movie.title = updateMovieDto.title</span>
+<span class="nc" id="L76">        movie.releaseDate = updateMovieDto.releaseDate</span>
+<span class="nc" id="L77">        movie = movieService.save(movie)</span>
+<span class="nc" id="L78">        return ResponseEntity.ok(movie.toMovieDto())</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

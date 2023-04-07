@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ExceptionControllerAdvice.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">movie-api</a> &gt; <a href="index.source.html" class="el_package">com.bill.demo.exceptions</a> &gt; <span class="el_source">ExceptionControllerAdvice.kt</span></div><h1>ExceptionControllerAdvice.kt</h1><pre class="source lang-java linenums">package com.bill.demo.exceptions
+
+import io.jsonwebtoken.ExpiredJwtException
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.validation.FieldError
+import org.springframework.web.bind.MethodArgumentNotValidException
+import org.springframework.web.bind.annotation.ControllerAdvice
+import org.springframework.web.bind.annotation.ExceptionHandler
+
+<span class="nc" id="L11">@ControllerAdvice</span>
+<span class="nc" id="L12">class ExceptionControllerAdvice {</span>
+
+    @ExceptionHandler
+    fun handleMethodArgumentNotValidException(ex: MethodArgumentNotValidException): ResponseEntity&lt;AppErrorModel&gt; {
+<span class="nc" id="L16">        val fieldErrors: List&lt;FieldError&gt; = ex.fieldErrors</span>
+<span class="nc" id="L17">        val validationErrors = fieldErrors.associate { it.field to it.defaultMessage }</span>
+<span class="nc" id="L18">        val errorDetails = AppErrorModel(</span>
+<span class="nc" id="L19">            status = HttpStatus.BAD_REQUEST.value(),</span>
+<span class="nc" id="L20">            message = &quot;Validation Failed&quot;,</span>
+<span class="nc" id="L21">            details = validationErrors</span>
+        )
+<span class="nc" id="L23">        return ResponseEntity(errorDetails, HttpStatus.BAD_REQUEST)</span>
+    }
+
+    @ExceptionHandler
+    fun handleIllegalStateException(ex: IllegalStateException): ResponseEntity&lt;AppErrorModel&gt; {
+<span class="nc" id="L28">        val errorMessage = AppErrorModel(</span>
+<span class="nc" id="L29">            status = HttpStatus.NOT_FOUND.value(),</span>
+<span class="nc" id="L30">            message = ex.localizedMessage,</span>
+<span class="nc" id="L31">            details = emptyMap()</span>
+        )
+<span class="nc" id="L33">        return ResponseEntity(errorMessage, HttpStatus.BAD_REQUEST)</span>
+    }
+
+    @ExceptionHandler
+    fun handleAppException(appException: AppException): ResponseEntity&lt;AppErrorModel&gt; {
+<span class="nc" id="L38">        val errorMessage = AppErrorModel(</span>
+<span class="nc" id="L39">            status = appException.status.value(),</span>
+<span class="nc" id="L40">            message = appException.localizedMessage,</span>
+<span class="nc" id="L41">            details = emptyMap()</span>
+        )
+<span class="nc" id="L43">        return ResponseEntity(errorMessage, appException.status)</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultActorService.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">movie-api</a> &gt; <a href="index.source.html" class="el_package">com.bill.demo.services.impl</a> &gt; <span class="el_source">DefaultActorService.kt</span></div><h1>DefaultActorService.kt</h1><pre class="source lang-java linenums">package com.bill.demo.services.impl
+
+import com.bill.demo.entity.Actor
+import com.bill.demo.exceptions.AppException
+import com.bill.demo.repository.ActorRepository
+import com.bill.demo.services.ActorService
+import org.springframework.dao.EmptyResultDataAccessException
+import org.springframework.http.HttpStatus
+import org.springframework.stereotype.Service
+import org.springframework.web.server.ResponseStatusException
+
+<span class="fc" id="L12">@Service</span>
+<span class="fc" id="L13">class DefaultActorService(</span>
+<span class="fc" id="L14"> val actorRepository: ActorRepository</span>
+): ActorService {
+
+ override fun getAllActors(): List&lt;Actor&gt; {
+<span class="nc" id="L18">  return actorRepository.findAll().toList()</span>
+ }
+
+ override fun save(actor: Actor): Actor {
+<span class="nc" id="L22">  return actorRepository.save(actor)</span>
+ }
+
+ override fun findById(actorId: Long): Actor {
+<span class="fc" id="L26">  return actorRepository.findById(actorId).orElseThrow {</span>
+<span class="nc" id="L27">     AppException(&quot;Actor not found&quot;, HttpStatus.NOT_FOUND)</span>
+  }
+ }
+
+ override fun deleteById(actorId: Long) {
+<span class="nc" id="L32">  actorRepository.findById(actorId).orElseThrow {</span>
+<span class="nc" id="L33">     AppException(&quot;Actor not found&quot;, HttpStatus.NOT_FOUND)</span>
+  }
+<span class="nc" id="L35">  actorRepository.deleteById(actorId)</span>
+<span class="nc" id="L36"> }</span>
+
+ override fun findActorByName(name: String): Actor? {
+<span class="nc" id="L39">  return try {</span>
+<span class="nc" id="L40">   actorRepository.findActorByName(name)</span>
+<span class="nc" id="L41">  } catch (ex: EmptyResultDataAccessException){</span>
+<span class="nc" id="L42">   null;</span>
+  }
+ }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

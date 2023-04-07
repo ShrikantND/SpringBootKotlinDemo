@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthController.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">movie-api</a> &gt; <a href="index.source.html" class="el_package">com.bill.demo.controllers</a> &gt; <span class="el_source">AuthController.kt</span></div><h1>AuthController.kt</h1><pre class="source lang-java linenums">package com.bill.demo.controllers
+
+import com.bill.demo.dto.AuthRequest
+import com.bill.demo.security.JwtService
+import jakarta.validation.Valid
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.userdetails.UsernameNotFoundException
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
+
+
+<span class="nc" id="L17">@RestController</span>
+@RequestMapping(&quot;/v1/auth&quot;)
+<span class="nc" id="L19">class AuthController {</span>
+
+    @Autowired
+    private val jwtService: JwtService? = null
+
+    @Autowired
+    private val authenticationManager: AuthenticationManager? = null
+
+    @PostMapping(&quot;&quot;)
+    fun authenticateAndGetToken(@Valid @RequestBody authRequest: AuthRequest): String? {
+<span class="nc" id="L29">        val authentication: Authentication = authenticationManager!!.authenticate(</span>
+<span class="nc" id="L30">            UsernamePasswordAuthenticationToken(</span>
+<span class="nc" id="L31">                authRequest.getUsername(),</span>
+<span class="nc" id="L32">                authRequest.getPassword()</span>
+            )
+        )
+<span class="nc bnc" id="L35" title="All 2 branches missed.">        return if (authentication.isAuthenticated) {</span>
+<span class="nc" id="L36">            jwtService!!.generateToken(authRequest.getUsername()!!)</span>
+        } else {
+<span class="nc" id="L38">            throw UsernameNotFoundException(&quot;Invalid request !&quot;)</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="movie-entity-0.0.1-SNAPSHOT-plain">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/movie-entity/build/libs/movie-entity-0.0.1-SNAPSHOT-plain.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
