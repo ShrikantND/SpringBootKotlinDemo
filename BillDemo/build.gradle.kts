@@ -9,23 +9,6 @@ plugins {
 	id("io.spring.dependency-management") version "1.1.0" apply false
 }
 
-//jacoco {
-//	toolVersion = "0.8.8"
-//}
-
-//tasks.test {
-//	finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
-//}
-//tasks.jacocoTestReport {
-//	dependsOn(tasks.test) // tests are required to run before generating the report
-//}
-//tasks.jacocoTestReport {
-//	reports {
-//		xml.required.set(false)
-//		csv.required.set(false)
-//		html.outputLocation.set(layout.buildDirectory.dir("jacocoHtml"))
-//	}
-//}
 
 java.sourceCompatibility = JavaVersion.VERSION_17
 
@@ -40,16 +23,6 @@ allprojects {
 	}
 }
 
-//val projectGroup: String by project
-//val applicationVersion: String by project
-//allprojects {
-//	group = projectGroup
-//	version = applicationVersion
-//
-//	repositories {
-//		mavenCentral()
-//	}
-//}
 
 subprojects {
 	apply(plugin = "jacoco")
